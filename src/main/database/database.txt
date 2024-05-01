@@ -1,0 +1,1 @@
+{"firstName":"test","lastName":"testname","password":"test1234","IBAN":"RO10SLTB5586527461285793","birthYear":1995,"email":"test@google.ro","username":"test1234"}
