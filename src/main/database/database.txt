@@ -1,1 +1,2 @@
-{"firstName":"test","lastName":"testname","password":"test1234","IBAN":"RO10SLTB5586527461285793","birthYear":1995,"email":"test@google.ro","username":"test1234"}
+{"firstName":"asdf","lastName":"1234","password":"asdf1234","IBAN":"RO10SLTB1757595866913033","birthYear":1995,"email":"asdf1234@asdf.asd","username":"asdf1234"}
+{"firstName":"qwer1234","lastName":"qwer1234","password":"qwer1234","IBAN":"RO10SLTB9923869807883252909","birthYear":1994,"email":"qwer@qwer@qwer","username":"qwer1234"}

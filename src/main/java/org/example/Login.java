@@ -13,17 +13,15 @@ public class Login {
 
     public void loginWelcome() throws IOException {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Introduceti numele de utilizator");
-        System.out.println("Daca vrei sa mergi la meniul anterior, apasa 9");
-        System.out.println("-> ");
+        System.out.println("Please insert the username.");
+        System.out.println("If you want to go back to the main menu, please insert 9 and press the Enter key.");
         String userLoginInput = scanner.next();
 
         if (Objects.equals(userLoginInput, "9")) {
             Application app = new Application();
         }
 
-        System.out.println("Introduceti parola");
-        System.out.println("-> ");
+        System.out.println("Insert the password.");
         String passwordLoginInput = scanner.next();
 
         loginCheck(userLoginInput, passwordLoginInput);
@@ -40,20 +38,20 @@ public class Login {
                 while (passwordReader.hasNextLine()) {
                     String data = passwordReader.nextLine();
                     if (Objects.equals(data, passwordLoginInput)) {
-                        System.out.println("Bine ai venit la SaltBank " + userLoginInput);
+                        System.out.println("Welcome to SaltBank " + userLoginInput);
                     } else {
-                        System.out.println("Parola introdusa nu este corecta. Te rugam sa reintroduci datele");
+                        System.out.println("The password is not correct, please try again.");
                         loginWelcome();
                     }
                 }
                 passwordReader.close();
             } catch (FileNotFoundException e) {
-                System.out.println("A aparut o eroare, te rugam sa incerci mai tarziu.");
+                System.out.println("An error occurred, please try again later.");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         } else {
-            System.out.println("Numele de utilizator introdus nu exista, doresti sa iti creezi un cont nou?");
+            System.out.println("The username is not in the database.");
         }
     }
 }
