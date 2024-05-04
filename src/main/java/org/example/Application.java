@@ -10,12 +10,12 @@ public class Application {
         navigationWelcome();
     }
 
-    public void welcome() {
+    private void welcome() {
         System.out.println("\uD83C\uDD82\uD83C\uDD70\uD83C\uDD7B\uD83C\uDD83\uD83C\uDD71\uD83C\uDD70\uD83C\uDD7D\uD83C\uDD7A");
         System.out.println("Welcome to SaltBank. To continue, please create an account or log in into an existing one.");
     }
 
-    public void navigationWelcome() throws IOException {
+    void navigationWelcome() throws IOException {
         System.out.println("1. Log in");
         System.out.println("2. Register new account");
         System.out.println("3. Exit");
@@ -44,7 +44,7 @@ public class Application {
         } while (!userInput.equals("1") && !userInput.equals("2") && !userInput.equals("3"));
     }
 
-    public void killApp(){
+    private void killApp(){
         return;
     }
 }

@@ -29,7 +29,7 @@ public class Login {
     }
 
     public void loginCheck(String userLoginInput, String passwordLoginInput) {
-        String filePath = "src/main/database/database.txt";
+        String filePath = "src/main/database/db.json";
         File file = new File(filePath);
 
         if (file.exists()) {

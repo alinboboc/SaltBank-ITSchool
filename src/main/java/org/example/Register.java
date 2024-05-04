@@ -1,105 +1,107 @@
 package org.example;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.*;
 import java.time.Year;
 import java.util.Objects;
 import java.util.Scanner;
-
-import org.json.simple.JSONObject;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Register {
 
     private String newUserRegistration;
     private String newUserRegistrationPassword;
     private String newUserRegistrationPasswordConfirmation;
-    private String newUserfirstName;
+    private String newUserFirstName;
     private String newUserLastName;
     private String newUserEmailAddress;
     private int newUserBirthYear;
 
-    public String getNewUserfirstName() {
-        return newUserfirstName;
+    private String getNewUserFirstName() {
+        return newUserFirstName;
     }
 
-    public void setNewUserfirstName(String newUserfirstName) {
-        this.newUserfirstName = newUserfirstName;
+    private void setNewUserFirstName(String newUserFirstName) {
+        this.newUserFirstName = newUserFirstName;
     }
 
-    public int getNewUserBirthYear() {
+    private int getNewUserBirthYear() {
         return newUserBirthYear;
     }
 
-    public void setNewUserBirthYear(int newUserBirthYear) {
+    private void setNewUserBirthYear(int newUserBirthYear) {
         this.newUserBirthYear = newUserBirthYear;
     }
 
-    public String getNewUserEmailAddress() {
+    private String getNewUserEmailAddress() {
         return newUserEmailAddress;
     }
 
-    public void setNewUserEmailAddress(String newUserEmailAddress) {
+    private void setNewUserEmailAddress(String newUserEmailAddress) {
         this.newUserEmailAddress = newUserEmailAddress;
     }
 
-    public String getNewUserLastName() {
+    private String getNewUserLastName() {
         return newUserLastName;
     }
 
-    public void setNewUserLastName(String newUserLastName) {
+    private void setNewUserLastName(String newUserLastName) {
         this.newUserLastName = newUserLastName;
     }
 
-    public String getNewUserRegistration() {
+    private String getNewUserRegistration() {
         return newUserRegistration;
     }
 
-    public void setNewUserRegistration(String newUserRegistration) {
+    private void setNewUserRegistration(String newUserRegistration) {
         this.newUserRegistration = newUserRegistration;
     }
 
-    public String getNewUserRegistrationPassword() {
+    private String getNewUserRegistrationPassword() {
         return newUserRegistrationPassword;
     }
 
-    public void setNewUserRegistrationPassword(String newUserRegistrationPassword) {
+    private void setNewUserRegistrationPassword(String newUserRegistrationPassword) {
         this.newUserRegistrationPassword = newUserRegistrationPassword;
     }
 
-    public String getNewUserRegistrationPasswordConfirmation() {
+    private String getNewUserRegistrationPasswordConfirmation() {
         return newUserRegistrationPasswordConfirmation;
     }
 
-    public void setNewUserRegistrationPasswordConfirmation(String newUserRegistrationPasswordConfirmation) {
+    private void setNewUserRegistrationPasswordConfirmation(String newUserRegistrationPasswordConfirmation) {
         this.newUserRegistrationPasswordConfirmation = newUserRegistrationPasswordConfirmation;
     }
 
     Scanner scanner = new Scanner(System.in);
 
-    public void registerWelcome() throws IOException {
+    void registerWelcome() throws IOException {
         System.out.println("Welcome to SaltBank!");
         System.out.println("If you want to go back to the main menu, please insert 9 and press the Enter key.");
         System.out.println("To register, please choose an username:");
         registerUsername();
     }
 
-    public void registerUsername() throws IOException {
+    private void registerUsername() throws IOException {
         System.out.println("Username:");
         setNewUserRegistration(scanner.next());
         if (getNewUserRegistration().equals("9")) {
             Application application = new Application();
             application.navigationWelcome();
         }
-        if (getNewUserRegistration().length() < 8) {
-            System.out.println("The username must contain at last 8 characters.");
+        if (getNewUserRegistration().length() < 6) {
+            System.out.println("The username must contain at last 6 characters.");
             registerUsername();
         }
-        if (getNewUserRegistration().length() >= 8) {
+        if (getNewUserRegistration().length() >= 6) {
+            //needs to be moved to the next step
             registerFirstName();
-            registerLastName();
         }
     }
 
-    public void registerPassword() {
+    private void registerPassword() {
         System.out.println("Password: ");
         setNewUserRegistrationPassword(scanner.next());
         if (getNewUserRegistrationPassword().length() < 8) {
@@ -112,28 +114,21 @@ public class Register {
                 System.out.println("The password is not the same with the previous one, please try again.");
                 registerPassword();
             } else {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("username", getNewUserRegistration());
-                jsonObject.put("password", getNewUserRegistrationPasswordConfirmation());
-                jsonObject.put("email", getNewUserEmailAddress());
-                jsonObject.put("firstName", getNewUserfirstName());
-                jsonObject.put("lastName", getNewUserLastName());
-                jsonObject.put("birthYear", getNewUserBirthYear());
-                jsonObject.put("IBAN", ibanGenerator());
-                jsonObject.put("balance", 0);
+                User newUser = new User(getNewUserRegistration(),getNewUserRegistrationPasswordConfirmation(),getNewUserEmailAddress(),getNewUserFirstName(),getNewUserLastName(),getNewUserBirthYear(),ibanGenerator(),0);
                 try {
-                    FileWriter file = new FileWriter("src/main/database/database.txt", true);
-                    file.write(jsonObject.toJSONString() + "\n");
-                    file.close();
+                    ObjectMapper mapper = new ObjectMapper();
+                    FileOutputStream outputStream = new FileOutputStream("src/main/database/db.json");
+                    mapper.writeValue(outputStream, newUser);
+                    outputStream.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.out.println("An error occurred, please try again later.");
                 }
             }
         }
     }
 
-    public void registerEmail() {
-        System.out.println("Email adress:");
+    private void registerEmail() {
+        System.out.println("Email address:");
         setNewUserEmailAddress(scanner.next());
         if (!getNewUserEmailAddress().contains("@")) {
             System.out.println("The email address does not contain @ symbol, please try again.");
@@ -143,18 +138,29 @@ public class Register {
         }
     }
 
-    public void registerFirstName() {
+    private void registerFirstName() {
         System.out.println("First name:");
-        setNewUserfirstName(scanner.next());
+        setNewUserFirstName(scanner.next());
+        if (regexChecker(getNewUserFirstName())) {
+            System.out.println("The name you entered contains invalid characters, please try again.");
+            registerFirstName();
+        } else {
+            registerLastName();
+        }
     }
 
-    public void registerLastName() {
+    private void registerLastName() {
         System.out.println("Last name:");
         setNewUserLastName(scanner.next());
-        registerEmail();
+        if (regexChecker(getNewUserLastName())) {
+            System.out.println("The name you entered contains invalid characters, please try again.");
+            registerLastName();
+        } else {
+            registerEmail();
+        }
     }
 
-    public void registerBirthYear() {
+    private void registerBirthYear() {
         System.out.println("Birth year:");
         setNewUserBirthYear(Integer.parseInt(scanner.next()));
         int year = Year.now().getValue();
@@ -165,12 +171,19 @@ public class Register {
         }
     }
 
-    public String ibanGenerator() {
+    private String ibanGenerator() {
         String fullIBAN = "RO10SLTB";
         while (fullIBAN.length() < 24) {
             int ibanRandomNumbers = (int) Math.floor(Math.random() * 10000);
             fullIBAN = fullIBAN.concat(String.valueOf(ibanRandomNumbers));
         }
         return fullIBAN;
+    }
+
+    private boolean regexChecker(String input) {
+        String regex = "[^a-zA-Z]+";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(input);
+        return matcher.find();
     }
 }
